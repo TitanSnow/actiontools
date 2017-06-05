@@ -60,7 +60,7 @@ class Jobclient:
 
     def join(self, blocking = True, timeout = -1):
         """join jobthread"""
-        if not self.do(None, blocking = blocking, timeout = timeout):
+        if not self.is_alive() or not self.do(None, blocking = blocking, timeout = timeout):
             return False
         self._jobthread.join()
         return True
@@ -68,3 +68,6 @@ class Jobclient:
     def is_alive(self):
         """returns whether jobthread is alive"""
         return self._jobthread.is_alive()
+
+    def __del__(self):
+        self.join()
