@@ -2,6 +2,10 @@ from threading import Thread, Lock, Event
 from collections import deque
 
 class Jobclient:
+    """
+    Jobclient class
+    a jobclient is a thread to run jobs
+    """
     def __init__(self):
         self._distlock = Lock()
         self._distevet = Event()
@@ -11,6 +15,7 @@ class Jobclient:
         self._jobthread.start()
 
     def _threadwork(self):
+        """the function for thread to run jobs"""
         while True:
             self._distevet.wait()
             self._distlock.acquire()
@@ -28,6 +33,13 @@ class Jobclient:
             self._distlock.release()
 
     def do(self, *args, blocking = True, timeout = -1):
+        """
+        dist jobs
+        if thread is doing jobs, wait to dist
+        blocking: a bool to set whether wait blockly
+        timeout: the wait timeout
+        returns whether jobs are disted
+        """
         if not self._distlock.acquire(blocking, timeout):
             return False
         self._jobqueue += args
@@ -36,19 +48,23 @@ class Jobclient:
         return True
 
     def get_lasterror(self):
+        """returns last error in jobthread"""
         return self._lasterror
 
     def wait(self, blocking = True, timeout = -1):
+        """wait jobthread to be distable"""
         if not self._distlock.acquire(blocking, timeout):
             return False
         self._distlock.release()
         return True
 
     def join(self, blocking = True, timeout = -1):
+        """join jobthread"""
         if not self.do(None, blocking = blocking, timeout = timeout):
             return False
         self._jobthread.join()
         return True
 
     def is_alive(self):
+        """returns whether jobthread is alive"""
         return self._jobthread.is_alive()
