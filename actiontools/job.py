@@ -15,6 +15,10 @@ class Job:
         self.on()
         self.after()
 
+class TemporarilyNotAvailable(RuntimeError):
+    def __init__(self, err_msg = "Temporarily not available. Retry needed"):
+        super().__init__(err_msg)
+
 def do_once(joblist, maxjobs = 1):
     """
     do `maxjobs` of jobs at once
