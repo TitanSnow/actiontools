@@ -37,6 +37,10 @@ class Phony(Target):
         """set state to satisfied"""
         self._satisfied = True
 
+    def _clear_satisfied(self):
+        """clear state to satisfied"""
+        self._satisfied = False
+
     def do(self):
         """
         do this phony
