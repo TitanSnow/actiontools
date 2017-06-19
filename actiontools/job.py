@@ -1,5 +1,6 @@
 from threading import Thread
 from queue import Queue, Empty
+from time import sleep
 
 class Job:
     """class Job"""
@@ -20,7 +21,7 @@ class TemporarilyNotAvailable(RuntimeError):
     def __init__(self, err_msg = "Temporarily not available. Retry needed"):
         super().__init__(err_msg)
 
-def do_once(joblist, maxjobs = 1):
+def do_once(joblist, maxjobs = 1, idle_wait_sleeptime = 0.01):
     """
     do `maxjobs` of jobs at once
     if maxjobs <= 0, it will be set to len(joblist)
@@ -38,6 +39,7 @@ def do_once(joblist, maxjobs = 1):
                     job.do()
                 except TemporarilyNotAvailable:
                     q.put(job)
+                    sleep(idle_wait_sleeptime)
                 except Exception as err:
                     e = err
         except Empty:
