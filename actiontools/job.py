@@ -35,9 +35,10 @@ def do_once(joblist, maxjobs = 1):
                 job = q.get_nowait()
                 try:
                     job.do()
+                except TemporarilyNotAvailable:
+                    q.put(job)
                 except Exception as err:
                     e = err
-                q.task_done()
         except Empty:
             pass
     for item in joblist:
