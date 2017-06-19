@@ -16,6 +16,7 @@ class Job:
         self.after()
 
 class TemporarilyNotAvailable(RuntimeError):
+    """Exception TemporarilyNotAvailable"""
     def __init__(self, err_msg = "Temporarily not available. Retry needed"):
         super().__init__(err_msg)
 

@@ -15,6 +15,7 @@ class Target(Job):
         raise NotImplementedError()
 
 class DepNotSatisfied(TemporarilyNotAvailable):
+    """Exception DepNotSatisfied"""
     def __init__(self, err_msg = "Dep not satisfied"):
         super().__init__(err_msg)
 
@@ -55,14 +56,15 @@ class Phony(Target):
             else:
                 raise DepNotSatisfied()
 
-class CannotSatisfy(RuntimeError):
+class DepCannotSatisfy(RuntimeError):
+    """Exception DepCannotSatisfy"""
     def __init__(self, err_msg = "Deps cannot satisfiy"):
         super().__init__(err_msg)
 
 def dep_walk(target, visited = set()):
     """
     walk deps for a target
-    raise `CannotSatisfy` if there is recursion ref
+    raise `DepCannotSatisfy` if there is recursion ref
     return a set of targets walked
     """
     if target.is_satisfied():
@@ -71,7 +73,7 @@ def dep_walk(target, visited = set()):
         rst = set([target])
         for dep in [dep for dep in target.deps if not dep.is_satisfied()]:
             if dep in visited or dep is target:
-                raise CannotSatisfy()
+                raise DepCannotSatisfy()
             else:
                 rst |= dep_walk(dep, visited | set([target]))
         return rst
