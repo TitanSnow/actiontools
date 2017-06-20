@@ -19,7 +19,7 @@ class Job:
 
 class TemporarilyNotAvailable(RuntimeError):
     """Exception TemporarilyNotAvailable"""
-    def __init__(self, err_msg: str = "Temporarily not available. Retry needed"):
+    def __init__(self, err_msg: str = "Temporarily not available. Retry needed") -> None:
         super().__init__(err_msg)
 
 def do_once(joblist: Sequence[Job], maxjobs: int = 1, idle_wait_sleeptime: float = 0.01):

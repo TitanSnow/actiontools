@@ -3,7 +3,7 @@ from typing import Sequence, Set
 
 class Target(Job):
     """class Target"""
-    def __init__(self, deps: Sequence['Target'] = []):
+    def __init__(self, deps: Sequence['Target'] = []) -> None:
         """init target with deps"""
         self.deps = deps
 
@@ -17,7 +17,7 @@ class Target(Job):
 
 class DepNotSatisfied(TemporarilyNotAvailable):
     """Exception DepNotSatisfied"""
-    def __init__(self, err_msg: str = "Dep not satisfied"):
+    def __init__(self, err_msg: str = "Dep not satisfied") -> None:
         super().__init__(err_msg)
 
 class Phony(Target):
@@ -59,7 +59,7 @@ class Phony(Target):
 
 class DepCannotSatisfy(RuntimeError):
     """Exception DepCannotSatisfy"""
-    def __init__(self, err_msg: str = "Deps cannot satisfiy"):
+    def __init__(self, err_msg: str = "Deps cannot satisfiy") -> None:
         super().__init__(err_msg)
 
 def dep_walk(target: Target, visited: Set = set()) -> set:
