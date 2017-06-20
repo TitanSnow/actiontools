@@ -1,14 +1,31 @@
 from hashlib import sha1
 from typing import Tuple
-from os import path
+from os import path, fstat
+from io import BufferedReader
+
+def fget_file_hashcode(f: BufferedReader, bufsize: int = 1024*1024) -> bytes:
+    """get hashcode of a fileobj"""
+    filestat = fstat(f.fileno())
+    content = ('%032d%032d%032d%032d' % (filestat.st_mode, filestat.st_uid, filestat.st_gid, filestat.st_size)).encode('ascii')
+    hashobj = sha1()
+    hashobj.update(content)
+    while True:
+        content = f.read(bufsize)
+        if content:
+            hashobj.update(content)
+        else:
+            break
+    return hashobj.digest()
+
+def get_file_hashcode(pathname: str) -> bytes:
+    """get hashcode of a given path"""
+    with open(pathname, "rb") as f:
+        return fget_file_hashcode(f)
 
 def get_fileid(pathname: str) -> Tuple[str, bytes]:
-    """get fileid with a given path"""
-    with open(pathname, "rb") as f:
-        filesize = f.seek(0, 2) # seek to end to get file size
-        f.seek(0, 0)            # seek back to start
-        # use filesize as prefix. leftpad to 32
-        content_prefix = ('%032d' % filesize).encode('ascii')
-        content = f.read()
-        hashcode = sha1(content_prefix + content).digest()
-        return (path.abspath(pathname), hashcode)
+    """get fileid of a given path"""
+    return pathname, get_file_hashcode(pathname)
+
+def get_abs_fileid(pathname: str) -> Tuple[str, bytes]:
+    """get abs fileid of a given path"""
+    return path.abspath(pathname), get_file_hashcode(pathname)
