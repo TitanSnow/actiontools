@@ -1,8 +1,9 @@
 from .job import Job, TemporarilyNotAvailable
+from typing import Sequence, Set
 
 class Target(Job):
     """class Target"""
-    def __init__(self, deps: list = []):
+    def __init__(self, deps: Sequence['Target'] = []):
         """init target with deps"""
         self.deps = deps
 
@@ -61,7 +62,7 @@ class DepCannotSatisfy(RuntimeError):
     def __init__(self, err_msg: str = "Deps cannot satisfiy"):
         super().__init__(err_msg)
 
-def dep_walk(target: Target, visited: set = set()) -> set:
+def dep_walk(target: Target, visited: Set = set()) -> set:
     """
     walk deps for a target
     raise `DepCannotSatisfy` if there is recursion ref
