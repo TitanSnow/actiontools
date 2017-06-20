@@ -4,13 +4,13 @@ from time import sleep
 
 class Job:
     """class Job"""
-    def before(self):
+    def before(self) -> None:
         pass
-    def on(self):
+    def on(self) -> None:
         pass
-    def after(self):
+    def after(self) -> None:
         pass
-    def do(self):
+    def do(self) -> None:
         """do this job"""
         self.before()
         self.on()
@@ -18,10 +18,10 @@ class Job:
 
 class TemporarilyNotAvailable(RuntimeError):
     """Exception TemporarilyNotAvailable"""
-    def __init__(self, err_msg = "Temporarily not available. Retry needed"):
+    def __init__(self, err_msg: str = "Temporarily not available. Retry needed"):
         super().__init__(err_msg)
 
-def do_once(joblist, maxjobs = 1, idle_wait_sleeptime = 0.01):
+def do_once(joblist: list, maxjobs: int = 1, idle_wait_sleeptime: float = 0.01):
     """
     do `maxjobs` of jobs at once
     if maxjobs <= 0, it will be set to len(joblist)

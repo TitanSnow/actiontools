@@ -2,26 +2,26 @@ from .job import Job, TemporarilyNotAvailable
 
 class Target(Job):
     """class Target"""
-    def __init__(self, deps = []):
+    def __init__(self, deps: list = []):
         """init target with deps"""
         self.deps = deps
 
-    def dep_satisfied(self):
+    def dep_satisfied(self) -> bool:
         """check whether deps have satisfied"""
         raise NotImplementedError()
 
-    def is_satisfied(self):
+    def is_satisfied(self) -> bool:
         """check whether self has satisfied"""
         raise NotImplementedError()
 
 class DepNotSatisfied(TemporarilyNotAvailable):
     """Exception DepNotSatisfied"""
-    def __init__(self, err_msg = "Dep not satisfied"):
+    def __init__(self, err_msg: str = "Dep not satisfied"):
         super().__init__(err_msg)
 
 class Phony(Target):
     """class Phony"""
-    def dep_satisfied(self):
+    def dep_satisfied(self) -> bool:
         """check whether deps have satisfied"""
         for dep in self.deps:
             if not dep.is_satisfied():
@@ -30,19 +30,19 @@ class Phony(Target):
 
     _satisfied = False
 
-    def is_satisfied(self):
+    def is_satisfied(self) -> bool:
         """check whether self has satisfied"""
         return self._satisfied
 
-    def _set_satisfied(self):
+    def _set_satisfied(self) -> None:
         """set state to satisfied"""
         self._satisfied = True
 
-    def _clear_satisfied(self):
+    def _clear_satisfied(self) -> None:
         """clear state to satisfied"""
         self._satisfied = False
 
-    def do(self):
+    def do(self) -> None:
         """
         do this phony
         raise `DepNotSatisfied` if dep not satisfied
@@ -58,10 +58,10 @@ class Phony(Target):
 
 class DepCannotSatisfy(RuntimeError):
     """Exception DepCannotSatisfy"""
-    def __init__(self, err_msg = "Deps cannot satisfiy"):
+    def __init__(self, err_msg: str = "Deps cannot satisfiy"):
         super().__init__(err_msg)
 
-def dep_walk(target, visited = set()):
+def dep_walk(target: Target, visited: set = set()) -> set:
     """
     walk deps for a target
     raise `DepCannotSatisfy` if there is recursion ref
