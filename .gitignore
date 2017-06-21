@@ -130,3 +130,9 @@ Session.vim
 tags
 
 # End of https://www.gitignore.io/api/vim,linux,python
+
+### actiontools storage files ###
+.actiontools_*_storage*
+
+### jetbrains ###
+.idea
