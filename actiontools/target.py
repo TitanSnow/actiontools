@@ -5,7 +5,10 @@ class Target(Job):
     """class Target"""
     def __init__(self, deps: Sequence['Target'] = tuple()) -> None:
         """init target with deps"""
-        self.deps = deps
+        try:
+            self.deps += list(deps)
+        except AttributeError:
+            self.deps = list(deps)
 
     def dep_satisfied(self) -> bool:
         """check whether deps have satisfied"""
