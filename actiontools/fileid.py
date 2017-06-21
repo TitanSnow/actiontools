@@ -2,6 +2,8 @@ from hashlib import sha1
 from typing import Tuple, BinaryIO
 from os import path, fstat
 
+Fileid = Tuple[str, bytes]
+
 def fget_file_hashcode(f: BinaryIO, bufsize: int = 1024*1024) -> bytes:
     """get hashcode of a fileobj"""
     filestat = fstat(f.fileno())
@@ -21,10 +23,10 @@ def get_file_hashcode(pathname: str) -> bytes:
     with open(pathname, "rb") as f:
         return fget_file_hashcode(f)
 
-def get_fileid(pathname: str) -> Tuple[str, bytes]:
+def get_fileid(pathname: str) -> Fileid:
     """get fileid of a given path"""
     return pathname, get_file_hashcode(pathname)
 
-def get_abs_fileid(pathname: str) -> Tuple[str, bytes]:
+def get_abs_fileid(pathname: str) -> Fileid:
     """get abs fileid of a given path"""
     return path.abspath(pathname), get_file_hashcode(pathname)
