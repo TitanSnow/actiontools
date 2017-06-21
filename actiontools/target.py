@@ -1,5 +1,6 @@
-from .job import Job, TemporarilyNotAvailable
 from typing import Sequence, AbstractSet, FrozenSet
+from .job import Job, TemporarilyNotAvailable
+import actiontools.filewatcher as filewatcher
 
 class Target(Job):
     """class Target"""
@@ -59,6 +60,51 @@ class Phony(Target):
                 self._set_satisfied()
             else:
                 raise DepNotSatisfied()
+
+class Update(Phony):
+    """class Update"""
+    def is_updated(self) -> bool:
+        """check whether self is updated"""
+        raise NotImplementedError()
+
+    def need_update(self) -> bool:
+        """check whether self needs update"""
+        for dep in [dep for dep in self.deps if isinstance(dep, Update)]:
+            if dep.is_updated():
+                return True
+        return False
+
+    def do(self) -> None:
+        """
+        do this update
+        raise `DepNotSatisfied` if dep not satisfied
+        do nothing if self is satisfied or no update needed
+        after job done, set state to satisfied
+        """
+        if not self.need_update():
+            self._set_satisfied()
+        else:
+            super().do()
+
+class File(Update):
+    """class File"""
+    def is_updated(self) -> bool:
+        """check whether self is updated by checking file"""
+        try:
+            return self._updated
+        except AttributeError:
+            self._updated = filewatcher.get_is_updated(self.file)
+            return self._updated
+
+    def _set_satisfied(self) -> None:
+        """set state to satisfied and uncomfired"""
+        del self._updated
+        super()._set_satisfied()
+
+    def __init__(self, file: str, deps: Sequence[Target] = tuple()) -> None:
+        """init file with file and deps"""
+        super().__init__(deps)
+        self.file = file
 
 class DepCannotSatisfy(RuntimeError):
     """Exception DepCannotSatisfy"""
