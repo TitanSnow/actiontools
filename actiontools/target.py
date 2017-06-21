@@ -1,9 +1,9 @@
 from .job import Job, TemporarilyNotAvailable
-from typing import Sequence, Set
+from typing import Sequence, AbstractSet, FrozenSet
 
 class Target(Job):
     """class Target"""
-    def __init__(self, deps: Sequence['Target'] = []) -> None:
+    def __init__(self, deps: Sequence['Target'] = tuple()) -> None:
         """init target with deps"""
         self.deps = deps
 
@@ -62,19 +62,19 @@ class DepCannotSatisfy(RuntimeError):
     def __init__(self, err_msg: str = "Deps cannot satisfiy") -> None:
         super().__init__(err_msg)
 
-def dep_walk(target: Target, visited: Set = set()) -> set:
+def dep_walk(target: Target, visited: AbstractSet[Target] = frozenset()) -> FrozenSet[Target]:
     """
     walk deps for a target
     raise `DepCannotSatisfy` if there is recursion ref
     return a set of targets walked
     """
     if target.is_satisfied():
-        return set()
+        return frozenset()
     else:
-        rst = set([target])
+        rst = frozenset([target])
         for dep in [dep for dep in target.deps if not dep.is_satisfied()]:
             if dep in visited or dep is target:
                 raise DepCannotSatisfy()
             else:
-                rst |= dep_walk(dep, visited | set([target]))
+                rst |= dep_walk(dep, visited | frozenset([target]))
         return rst

@@ -1,9 +1,8 @@
 from hashlib import sha1
-from typing import Tuple
+from typing import Tuple, BinaryIO
 from os import path, fstat
-from io import BufferedReader
 
-def fget_file_hashcode(f: BufferedReader, bufsize: int = 1024*1024) -> bytes:
+def fget_file_hashcode(f: BinaryIO, bufsize: int = 1024*1024) -> bytes:
     """get hashcode of a fileobj"""
     filestat = fstat(f.fileno())
     content = ('%032d%032d%032d%032d' % (filestat.st_mode, filestat.st_uid, filestat.st_gid, filestat.st_size)).encode('ascii')
