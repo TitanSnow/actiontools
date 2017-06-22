@@ -1,4 +1,5 @@
-from typing import Sequence, AbstractSet, FrozenSet
+from typing import Sequence, AbstractSet, FrozenSet, Optional
+from os import path
 from .job import Job, TemporarilyNotAvailable
 import actiontools.filewatcher as filewatcher
 
@@ -69,10 +70,11 @@ class Update(Phony):
 
     def need_update(self) -> bool:
         """check whether self needs update"""
+        returnval = False
         for dep in [dep for dep in self.deps if isinstance(dep, Update)]:
             if dep.is_updated():
-                return True
-        return False
+                returnval = True
+        return returnval
 
     def do(self) -> None:
         """
@@ -96,15 +98,15 @@ class File(Update):
             self._updated = filewatcher.get_is_updated(self.file)
             return self._updated
 
-    def _set_satisfied(self) -> None:
-        """set state to satisfied and uncomfired"""
-        del self._updated
-        super()._set_satisfied()
+    def need_update(self) -> bool:
+        """check whether self needs update"""
+        return not path.exists(self.file) or super().need_update()
 
-    def __init__(self, file: str, deps: Sequence[Target] = tuple()) -> None:
+    def __init__(self, file: Optional[str] = None, deps: Sequence[Target] = tuple()) -> None:
         """init file with file and deps"""
         super().__init__(deps)
-        self.file = file
+        if file is not None:
+            self.file = file
 
 class DepCannotSatisfy(RuntimeError):
     """Exception DepCannotSatisfy"""
