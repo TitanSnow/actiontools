@@ -1,16 +1,16 @@
-from typing import Sequence, AbstractSet, FrozenSet, Optional
+from typing import AbstractSet, FrozenSet, Optional
 from os import path
 from .job import Job, TemporarilyNotAvailable
 import actiontools.filewatcher as filewatcher
 
 class Target(Job):
     """class Target"""
-    def __init__(self, deps: Sequence['Target'] = tuple()) -> None:
+    def __init__(self, deps: AbstractSet['Target'] = frozenset()) -> None:
         """init target with deps"""
         try:
-            self.deps += list(deps)
+            self.deps |= deps
         except AttributeError:
-            self.deps = list(deps)
+            self.deps = deps
 
     def dep_satisfied(self) -> bool:
         """check whether deps have satisfied"""
@@ -102,7 +102,7 @@ class File(Update):
         """check whether self needs update"""
         return not path.exists(self.file) or super().need_update()
 
-    def __init__(self, file: Optional[str] = None, deps: Sequence[Target] = tuple()) -> None:
+    def __init__(self, file: Optional[str] = None, deps: AbstractSet[Target] = frozenset()) -> None:
         """init file with file and deps"""
         super().__init__(deps)
         if file is not None:

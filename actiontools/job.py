@@ -1,7 +1,7 @@
 from threading import Thread
 from queue import Queue, Empty
 from time import sleep
-from typing import Sequence
+from typing import Collection
 
 class Job:
     """class Job"""
@@ -22,7 +22,7 @@ class TemporarilyNotAvailable(RuntimeError):
     def __init__(self, err_msg: str = "Temporarily not available. Retry needed") -> None:
         super().__init__(err_msg)
 
-def do_once(joblist: Sequence[Job], maxjobs: int = 1, idle_wait_sleeptime: float = 0.01):
+def do_once(joblist: Collection[Job], maxjobs: int = 1, idle_wait_sleeptime: float = 0.01):
     """
     do `maxjobs` of jobs at once
     if maxjobs <= 0, it will be set to len(joblist)
