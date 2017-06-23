@@ -8,9 +8,14 @@ class Target(Job):
     def __init__(self, deps: AbstractSet['Target'] = frozenset()) -> None:
         """init target with deps"""
         try:
-            self.deps |= deps
+            self.deps
         except AttributeError:
-            self.deps = deps
+            self.deps = set(deps)
+        else:
+            try:
+                self.deps.update(deps)
+            except AttributeError:
+                self.deps = set(self.deps) | deps
 
     def dep_satisfied(self) -> bool:
         """check whether deps have satisfied"""
