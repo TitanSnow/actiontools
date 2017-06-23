@@ -12,15 +12,19 @@ class ForwardTarget(Target):
         self.deps.update(deps)
 
 class ForwardPhony(ForwardTarget, Phony):
+    """class ForwardPhony"""
     pass
 
 class ForwardUpdate(ForwardTarget, Update):
+    """class ForwardUpdate"""
     pass
 
 class ForwardFile(ForwardTarget, File):
+    """class ForwardFile"""
     pass
 
 def dep_eval_type(target: ForwardTarget, globalns, localns, inited_objs: Mapping = dict()) -> None:
+    """eval the types in dep tree of given target"""
     inited_objs = {**inited_objs}
     new_deps = set()
     old_deps = target.deps
