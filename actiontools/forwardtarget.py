@@ -20,7 +20,7 @@ class ForwardUpdate(ForwardTarget, Update):
 class ForwardFile(ForwardTarget, File):
     pass
 
-def dep_eval_type(target: ForwardTarget, globalns, localns, inited_objs: Mapping = dict()):
+def dep_eval_type(target: ForwardTarget, globalns, localns, inited_objs: Mapping = dict()) -> None:
     inited_objs = {**inited_objs}
     new_deps = set()
     old_deps = target.deps
