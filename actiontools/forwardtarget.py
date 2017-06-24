@@ -23,8 +23,11 @@ class ForwardFile(ForwardTarget, File):
     """class ForwardFile"""
     pass
 
-def dep_eval_type(target: ForwardTarget, globalns, localns, inited_objs: Mapping = dict()) -> None:
-    """eval the types in dep tree of given target"""
+def dep_eval_type(target: ForwardTarget, globalns, localns, inited_objs: Mapping = dict()) -> ForwardTarget:
+    """
+    eval the types in dep tree of given target
+    returns the same target passed in. will modify origin target
+    """
     inited_objs = {**inited_objs}
     new_deps = set()
     old_deps = target.deps
@@ -35,8 +38,14 @@ def dep_eval_type(target: ForwardTarget, globalns, localns, inited_objs: Mapping
                 inited_objs[dep_type] = dep_type.eval_type(globalns, localns)()
             dep_instance = inited_objs[dep_type]
             new_deps.add(dep_instance)
+        elif isinstance(dep, type):
+            if dep not in inited_objs:
+                inited_objs[dep] = dep()
+            dep_instance = inited_objs[dep]
+            new_deps.add(dep_instance)
         else:
             new_deps.add(dep)
     target.deps = new_deps
     for dep in new_deps:
         dep_eval_type(dep, globalns, localns, inited_objs)
+    return target
