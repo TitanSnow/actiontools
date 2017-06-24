@@ -1,3 +1,6 @@
+# Copyright (c) 2017 TitanSnow; All Rights Reserved
+
+
 import subprocess
 from typing import Iterable, Optional, Sequence
 from .storage import get_storage, join_storage_path

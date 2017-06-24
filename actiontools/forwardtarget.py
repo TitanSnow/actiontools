@@ -1,3 +1,6 @@
+# Copyright (c) 2017 TitanSnow; All Rights Reserved
+
+
 from typing import Union, Mapping
 from .typingutils import ForwardRef, type_check
 from .target import *

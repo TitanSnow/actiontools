@@ -1,3 +1,6 @@
+# Copyright (c) 2017 TitanSnow; All Rights Reserved
+
+
 import actiontools.job
 import actiontools.target
 import actiontools.storage

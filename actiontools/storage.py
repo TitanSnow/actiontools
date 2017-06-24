@@ -1,3 +1,6 @@
+# Copyright (c) 2017 TitanSnow; All Rights Reserved
+
+
 import shelve
 from getpass import getuser
 from os import getpid, path, remove

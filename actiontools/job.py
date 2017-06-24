@@ -1,3 +1,6 @@
+# Copyright (c) 2017 TitanSnow; All Rights Reserved
+
+
 from threading import Thread
 from queue import Queue, Empty
 from time import sleep

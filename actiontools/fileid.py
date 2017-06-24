@@ -1,3 +1,6 @@
+# Copyright (c) 2017 TitanSnow; All Rights Reserved
+
+
 from hashlib import sha1
 from os import fstat
 from typing import Tuple, BinaryIO

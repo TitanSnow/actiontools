@@ -1,3 +1,6 @@
+# Copyright (c) 2017 TitanSnow; All Rights Reserved
+
+
 from typing import Optional, Callable
 from .fileid import get_fileid, Fileid
 from .storage import *

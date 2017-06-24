@@ -1,3 +1,6 @@
+# Copyright (c) 2017 TitanSnow; All Rights Reserved
+
+
 from typing import AbstractSet, FrozenSet, Optional
 from os import path
 from .job import Job, TemporarilyNotAvailable
