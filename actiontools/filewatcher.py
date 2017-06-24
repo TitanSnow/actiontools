@@ -3,10 +3,10 @@ from .fileid import get_fileid, Fileid
 from .storage import *
 
 def get_stored_fileid(pathname: str) -> Optional[Fileid]:
-    return get_storage(join_storage_path(['filewatcher', pathname]))
+    return get_storage(join_storage_path([__name__, 'files', pathname]))
 
 def set_stored_fileid(fid: Fileid) -> None:
-    set_local(join_storage_path(['filewatcher', fid[0]]), fid)
+    set_local(join_storage_path([__name__, 'files', fid[0]]), fid)
 
 def peek_is_updated(pathname: str, newfid: Optional[Fileid] = None) -> bool:
     oldfid = get_stored_fileid(pathname)
@@ -30,4 +30,4 @@ def get_is_updated(pathname: str, newfid: Optional[Fileid] = None, storer: Calla
     return is_updated
 
 def set_global_stored_fileid(fid: Fileid) -> None:
-    set_global(join_storage_path(['filewatcher', fid[0]]), fid)
+    set_global(join_storage_path([__name__, 'files', fid[0]]), fid)
