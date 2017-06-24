@@ -1,10 +1,19 @@
 import shelve
 from getpass import getuser
-from os import getpid, path
+from os import getpid, path, remove
 from typing import Any, Iterable
 import re
+import atexit
 
 Shelf = shelve.Shelf
+
+def del_session() -> None:
+    try:
+        remove(".actiontools_session_storage_" + str(getpid()))
+    except FileNotFoundError:
+        pass
+
+atexit.register(del_session)
 
 def open_session() -> Shelf:
     return shelve.open(".actiontools_session_storage_" + str(getpid()))
