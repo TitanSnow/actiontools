@@ -5,7 +5,7 @@ import subprocess
 from typing import Iterable, Optional, Sequence, Union
 from .storage import get_storage, join_storage_path
 
-def call(cmd: Union[str, Sequence[str]], flag: str = '') -> Optional[subprocess.CalledProcessError]:
+def call(cmd: Union[str, Sequence[str]], flag: str = '') -> Optional[Union[subprocess.SubprocessError, OSError]]:
     """
     do `cmd`
     `flag` is a str, the combination of log-control flag, error-ignore flag and shell flag
@@ -13,7 +13,7 @@ def call(cmd: Union[str, Sequence[str]], flag: str = '') -> Optional[subprocess.
     when not specified, is controlled by whether storage 'actiontools.verbose' is True
     error-ignore flag is 'i'
     when specified, will return exception object instead of raise it
-    when there raising subprocess.CalledProcessError on cmd starts with '-'
+    when there raising subprocess.SubprocessError or OSError on cmd starts with '-'
     shell flag is 's'
     when specified, cmd will be parsed as a shell string
     """
@@ -27,13 +27,13 @@ def call(cmd: Union[str, Sequence[str]], flag: str = '') -> Optional[subprocess.
             subprocess.check_call(cmd, shell = shell)
         else:
             subprocess.check_call(cmd, shell = shell, stdout = subprocess.DEVNULL, stderr = subprocess.DEVNULL)
-    except subprocess.CalledProcessError as e:
+    except (subprocess.SubprocessError, OSError) as e:
         if not ignore:
             raise e
         else:
             return e
 
-def calls(cmds: Iterable[Union[str, Sequence[str]]], flag: str = '') -> Sequence[Optional[subprocess.CalledProcessError]]:
+def calls(cmds: Iterable[Union[str, Sequence[str]]], flag: str = '') -> Sequence[Optional[Union[subprocess.SubprocessError, OSError]]]:
     """
     do `cmds`.
     returns a list of return value returned by `call`
