@@ -5,6 +5,10 @@ import subprocess
 from typing import Iterable, Optional, Sequence, Union
 from .storage import get_storage, join_storage_path
 
+class ctr(str):
+    """cmd control node type"""
+    pass
+
 def call(cmd: Union[str, Sequence[str]], flag: str = '') -> Optional[Union[subprocess.SubprocessError, OSError]]:
     """
     do `cmd`
@@ -13,11 +17,11 @@ def call(cmd: Union[str, Sequence[str]], flag: str = '') -> Optional[Union[subpr
     when not specified, is controlled by whether storage 'actiontools.verbose' is True
     error-ignore flag is 'i'
     when specified, will return exception object instead of raise it
-    when there raising subprocess.SubprocessError or OSError on cmd starts with '-'
+    when there raising subprocess.SubprocessError or OSError on cmd starts with ctr '-'
     shell flag is 's'
     when specified, cmd will be parsed as a shell string
     """
-    ignore = 'i' in flag and len(cmd) and cmd[0] == '-'
+    ignore = 'i' in flag and len(cmd) and isinstance(cmd[0], ctr) and cmd[0] == '-'
     shell = 's' in flag
     if ignore:
         cmd = cmd[1:]
