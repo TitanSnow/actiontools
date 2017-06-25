@@ -9,7 +9,7 @@ class ctr(str):
     """cmd control node type"""
     pass
 
-def call(cmd: Union[str, Sequence[str]], flag: str = '') -> Optional[Union[subprocess.SubprocessError, OSError]]:
+def call(cmd: Union[str, Sequence[Union[ctr, str]]], flag: str = '') -> Optional[Union[subprocess.SubprocessError, OSError]]:
     """
     do `cmd`
     `flag` is a str, the combination of log-control flag, error-ignore flag and shell flag
@@ -37,7 +37,7 @@ def call(cmd: Union[str, Sequence[str]], flag: str = '') -> Optional[Union[subpr
         else:
             return e
 
-def calls(cmds: Iterable[Union[str, Sequence[str]]], flag: str = '') -> Sequence[Optional[Union[subprocess.SubprocessError, OSError]]]:
+def calls(cmds: Iterable[Union[str, Sequence[Union[ctr, str]]]], flag: str = '') -> Sequence[Optional[Union[subprocess.SubprocessError, OSError]]]:
     """
     do `cmds`.
     returns a list of return value returned by `call`
