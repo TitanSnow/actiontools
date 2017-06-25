@@ -10,16 +10,21 @@ import atexit
 
 Shelf = shelve.Shelf
 
-def del_session() -> None:
+_session = shelve.open(".actiontools_session_storage_" + str(getpid()))
+_session_close = _session.close
+_session.close = lambda: None
+
+def rm_session() -> None:
+    _session_close()
     try:
         remove(".actiontools_session_storage_" + str(getpid()))
     except FileNotFoundError:
         pass
 
-atexit.register(del_session)
+atexit.register(rm_session)
 
 def open_session() -> Shelf:
-    return shelve.open(".actiontools_session_storage_" + str(getpid()))
+    return _session
 
 def open_local() -> Shelf:
     return shelve.open(".actiontools_local_storage_" + getuser())
