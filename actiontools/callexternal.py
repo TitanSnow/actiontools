@@ -2,55 +2,47 @@
 
 
 import subprocess
-from typing import Callable
-from .storage import *
+from typing import Callable, Union, Iterable, Optional, Any
+from functools import partial
+from .storage import get_storage, join_storage_path, open_session
 
-def call(*cmd) -> None:
-    if get_storage(join_storage_path(['actiontools', 'verbose'])) is True:
-        print(cmd)
-        subprocess.check_call(cmd)
-    else:
-        subprocess.check_call(cmd, stdout = subprocess.DEVNULL, stderr = subprocess.DEVNULL)
+def _call(cmd: Union[str, Iterable[str]], shell: bool, protect: bool) -> Optional[bool]:
+    try:
+        if get_storage(join_storage_path(['actiontools', 'verbose'])) is True:
+            print(cmd)
+            subprocess.check_call(cmd, shell = shell)
+        else:
+            subprocess.check_call(cmd, shell = shell, stdout = subprocess.DEVNULL, stderr = subprocess.DEVNULL)
+    except (subprocess.SubprocessError, OSError) as e:
+        if not protect:
+            raise e
+        else:
+            return False
+    if protect:
+        return True
 
-def shell(cmd: str) -> None:
-    if get_storage(join_storage_path(['actiontools', 'verbose'])) is True:
-        print(cmd)
-        subprocess.check_call(cmd, shell = True)
-    else:
-        subprocess.check_call(cmd, shell = True, stdout = subprocess.DEVNULL, stderr = subprocess.DEVNULL)
+call  = lambda *cmd: _call(cmd, False, False)
+shell = lambda  cmd: _call(cmd, True,  False)
+pcall  = lambda *cmd: _call(cmd, False, True)
+pshell = lambda  cmd: _call(cmd, True,  True)
 
-def verbose(func: Callable, *args) -> Any:
+def _verbose(verbose: bool, func: Callable, *args) -> Any:
     ph = join_storage_path(['actiontools', 'verbose'])
     with open_session() as db:
         try:
             origin = db[ph]
-            db[ph] = True
+            db[ph] = verbose
             try:
                 rv = func(*args)
             finally:
                 db[ph] = origin
         except KeyError:
-            db[ph] = True
+            db[ph] = verbose
             try:
                 rv = func(*args)
             finally:
                 del db[ph]
     return rv
 
-def quiet(func: Callable, *args) -> Any:
-    ph = join_storage_path(['actiontools', 'verbose'])
-    with open_session() as db:
-        try:
-            origin = db[ph]
-            db[ph] = False
-            try:
-                rv = func(*args)
-            finally:
-                db[ph] = origin
-        except KeyError:
-            db[ph] = False
-            try:
-                rv = func(*args)
-            finally:
-                del db[ph]
-    return rv
+verbose = partial(_verbose, True)
+quiet   = partial(_verbose, False)
