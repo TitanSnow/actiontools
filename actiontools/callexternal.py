@@ -65,6 +65,7 @@ def _pipe(cmds: Sequence[Union[Iterable[str], IO, str]], protect: bool) -> Optio
                 subprocess.check_call(cmds[-1], stdin = lastout, stdout = None if verbose else subprocess.DEVNULL, stderr = None if verbose else subprocess.DEVNULL, shell = isinstance(cmds[-1], str))
             elif len(cmds) >= (3 if ff else 2):
                 subprocess.check_call(cmds[-2], stdin = lastout, stdout = cmds[-1], stderr = None if verbose else subprocess.DEVNULL, shell = isinstance(cmds[-2], str))
+                cmds[-1].close()
         except (subprocess.SubprocessError, OSError) as e:
             if not protect:
                 raise e
