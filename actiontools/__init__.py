@@ -9,5 +9,5 @@ import actiontools.filewatcher
 import actiontools.callexternal
 import actiontools.typingutils
 import actiontools.forwardtarget
-import actiontools.externaljob
+import actiontools.lispjob
 import actiontools.lisp
