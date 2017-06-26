@@ -9,7 +9,7 @@ class LispMachine:
     def eval(self, lst: Iterable) -> Any:
         """eval `lst`"""
         def _isevalable(lst: Any) -> bool:
-            return isinstance(lst, Iterable)
+            return isinstance(lst, Iterable) and not isinstance(lst, str) and not isinstance(lst, bytes)
         def _resolve_func(symbol: Any) -> Callable:
             if isinstance(symbol, Callable):
                 return symbol
