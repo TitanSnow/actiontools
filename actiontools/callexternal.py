@@ -2,8 +2,9 @@
 
 
 import subprocess
-from typing import Callable, Union, Iterable, Optional, Any, Sequence
+from typing import Callable, Union, Iterable, Optional, Any, Sequence, IO
 from functools import partial
+from io import IOBase
 from .storage import get_storage, join_storage_path, open_session
 
 def _call(cmd: Union[str, Iterable[str]], shell: bool, protect: bool) -> Optional[bool]:
@@ -47,18 +48,23 @@ def _verbose(verbose: bool, func: Callable, *args) -> Any:
 verbose = partial(_verbose, True)
 quiet   = partial(_verbose, False)
 
-def _pipe(cmds: Sequence[Iterable[str]], protect: bool) -> Optional[bool]:
+def _pipe(cmds: Sequence[Union[Iterable[str], IO]], protect: bool) -> Optional[bool]:
     verbose = get_storage(join_storage_path(['actiontools', 'verbose'])) is True
     if verbose:
         print(cmds)
     if len(cmds):
-        lastout = None
+        ff = isinstance(cmds[0],  IOBase)
+        lf = isinstance(cmds[-1], IOBase)
+        lastout = cmds[0] if ff else None
         try:
-            for cmd in cmds[:-1]:
+            for cmd in cmds[1 if ff else 0 : -2 if lf else -1]:
                 p = subprocess.Popen(cmd, stdin = lastout, stdout = subprocess.PIPE)
                 if lastout is not None: lastout.close()
                 lastout = p.stdout
-            subprocess.check_call(cmds[-1], stdin = lastout, stdout = None if verbose else subprocess.DEVNULL, stderr = None if verbose else subprocess.DEVNULL)
+            if not lf:
+                subprocess.check_call(cmds[-1], stdin = lastout, stdout = None if verbose else subprocess.DEVNULL, stderr = None if verbose else subprocess.DEVNULL)
+            elif len(cmds) >= (3 if ff else 2):
+                subprocess.check_call(cmds[-2], stdin = lastout, stdout = cmds[-1], stderr = None if verbose else subprocess.DEVNULL)
         except (subprocess.SubprocessError, OSError) as e:
             if not protect:
                 raise e
