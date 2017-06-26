@@ -3,6 +3,9 @@
 
 from typing import Iterable, Callable, Any
 
+def quote():
+    raise NotImplementedError()
+
 class LispMachine:
     """class LispMachine"""
     functable = {}
@@ -20,6 +23,8 @@ class LispMachine:
         def _eval(lst: Iterable) -> Any:
             it = iter(lst)
             func = _resolve_func(next(it))
+            if func is quote:
+                return next(it)
             def get_args() -> Iterable:
                 while True:
                     item = next(it)
