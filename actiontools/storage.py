@@ -32,7 +32,7 @@ def open_local() -> Shelf:
 def open_global() -> Shelf:
     return shelve.open(path.join(path.expanduser("~"), ".actiontools_global_storage"))
 
-def get_storage(key: str) -> Any:
+def get_storage(key: str, default_value: Any = None) -> Any:
     with open_session() as db:
         if key in db:
             return db[key]
@@ -42,6 +42,7 @@ def get_storage(key: str) -> Any:
     with open_global() as db:
         if key in db:
             return db[key]
+    return default_value
 
 def set_session(key: str, value: Any) -> None:
     with open_session() as db:
