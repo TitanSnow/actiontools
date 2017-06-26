@@ -62,3 +62,5 @@ class or_(AcceptArgGenerator):
         except StopIteration:
             return False
 or_ = or_()
+
+lst = lambda *args: args
