@@ -31,7 +31,11 @@ class LispMachine:
                 return _resolve_func(_eval(symbol))
         def _eval(lst: Iterable) -> Any:
             it = iter(lst)
-            func = _resolve_func(next(it))
+            try:
+                symbol = next(it)
+            except StopIteration:
+                return (x for x in range(0))
+            func = _resolve_func(symbol)
             if func is quote:
                 return next(it)
             def get_args() -> Iterable:
