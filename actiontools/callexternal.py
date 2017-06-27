@@ -6,7 +6,6 @@ from typing import Callable, Union, Iterable, Optional, Any, Sequence, IO
 from functools import partial
 from io import IOBase
 from .storage import get_storage, join_storage_path, open_session
-from .lisp import AcceptArgGenerator
 
 def _call(cmd: Union[str, Iterable[str]], shell: bool, protect: bool) -> Optional[bool]:
     try:
@@ -35,13 +34,13 @@ def _verbose(verbose: bool, func: Callable, *args) -> Any:
             origin = db[ph]
             db[ph] = verbose
             try:
-                rv = func(*args) if not isinstance(func, AcceptArgGenerator) else func(args)
+                rv = func(*args)
             finally:
                 db[ph] = origin
         except KeyError:
             db[ph] = verbose
             try:
-                rv = func(*args) if not isinstance(func, AcceptArgGenerator) else func(args)
+                rv = func(*args)
             finally:
                 del db[ph]
     return rv
