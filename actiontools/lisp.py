@@ -67,4 +67,9 @@ class or_(AcceptArgGenerator):
             return False
 or_ = or_()
 
-lst = lambda *args: args
+class lst(AcceptArgGenerator):
+    def __call__(self, lst: Iterable) -> Iterable:
+        return lst
+lst = lst()
+
+doall = lambda lst: [x for x in lst]
