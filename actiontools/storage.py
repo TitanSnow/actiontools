@@ -15,6 +15,7 @@ _session_close = _session.close
 _session.close = lambda: None
 
 def rm_session() -> None:
+    _session.clear()
     _session_close()
     try:
         remove(".actiontools_session_storage_" + str(getpid()))
