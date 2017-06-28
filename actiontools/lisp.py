@@ -67,6 +67,8 @@ class or_(AcceptArgGenerator):
             return False
 or_ = or_()
 
+not_ = lambda x: not x
+
 class lst(AcceptArgGenerator):
     def __call__(self, lst: Iterable) -> Iterable:
         return lst
