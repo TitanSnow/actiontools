@@ -11,3 +11,4 @@ import actiontools.typingutils
 import actiontools.forwardtarget
 import actiontools.lispjob
 import actiontools.lisp
+import actiontools.cli
