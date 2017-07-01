@@ -6,6 +6,7 @@ from queue import Queue, Empty
 from time import sleep
 from typing import Collection, Optional
 from .storage import get_storage, join_storage_path
+from .lisp import LispMachine
 
 class Job:
     """class Job"""
@@ -62,3 +63,20 @@ def do_once(joblist: Collection[Job], maxjobs: Optional[int] = None, idle_wait_s
         thread.join()
     if e is not None:
         raise e
+
+class LispJob(Job):
+    """class LispJob"""
+    _lisp_machine = None
+    before_ = []
+    on_     = []
+    after_  = []
+    def before(self) -> None:
+        """prepare lisp machine and eval `self.before_`"""
+        self._lisp_machine = LispMachine()
+        self._lisp_machine.eval(self.before_)
+    def on(self) -> None:
+        """eval `self.on_`"""
+        self._lisp_machine.eval(self.on_)
+    def after(self) -> None:
+        """eval `self.after_`"""
+        self._lisp_machine.eval(self.after_)
